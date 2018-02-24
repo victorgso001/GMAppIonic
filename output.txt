@@ -1,0 +1,257 @@
+[2K[GRunning app-scripts build: --platform android --target cordova
+[14:53:52]  build dev started ... 
+[14:53:52]  clean started ... 
+[14:53:52]  clean finished in 22 ms 
+[14:53:52]  copy started ... 
+[14:53:53]  deeplinks started ... 
+[14:53:53]  deeplinks finished in 43 ms 
+[14:53:53]  transpile started ... 
+            Unexpected token. A constructor, method, accessor, or property was expected. 
+
+      L35:  //Gyroscope options
+      L36:  let gyroOptions: GyroscopeOptions = {
+      L37:    frequency: 1000
+
+            Declaration or statement expected. 
+
+      L40:    public presentActionSheet(){
+      L41:      let actionSheet = this.actionSheetCtrl.create({
+
+            ';' expected. 
+
+      L40:    public presentActionSheet(){
+      L41:      let actionSheet = this.actionSheetCtrl.create({
+
+            ',' expected. 
+
+      L62:    itemSelected(item: string) {
+      L63:      console.log("Selected Item", item);
+
+            ';' expected. 
+
+      L62:    itemSelected(item: string) {
+      L63:      console.log("Selected Item", item);
+
+            Declaration or statement expected. 
+
+      L66:  //Take picture function
+      L67:  public takePicture(sourceType){
+      L68:    var options = {
+
+            ';' expected. 
+
+      L66:  //Take picture function
+      L67:  public takePicture(sourceType){
+      L68:    var options = {
+
+            Declaration or statement expected. 
+
+     L108:  //Creating name for image:
+     L109:  private createFileName(){
+     L110:    var d = new Date(),
+
+            ';' expected. 
+
+     L108:  //Creating name for image:
+     L109:  private createFileName(){
+     L110:    var d = new Date(),
+
+            Declaration or statement expected. 
+
+     L116:  //Copiando a imagem para uma pasta logal
+     L117:  private copyFileToLocalDir(namePath, currentName, newFileName){
+     L118:    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+
+            ';' expected. 
+
+     L116:  //Copiando a imagem para uma pasta logal
+     L117:  private copyFileToLocalDir(namePath, currentName, newFileName){
+     L118:    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+
+            Declaration or statement expected. 
+
+     L127:  //Função para mostrar os Toast:
+     L128:  private presentToast(text){
+     L129:    let toast = this.toastCtrl.create({
+
+            ';' expected. 
+
+     L127:  //Função para mostrar os Toast:
+     L128:  private presentToast(text){
+     L129:    let toast = this.toastCtrl.create({
+
+            Declaration or statement expected. 
+
+     L137:  //get accurate path to the apps folder
+     L138:  public pathForImage(img){
+     L139:    if (img === null){
+
+            ';' expected. 
+
+     L137:  //get accurate path to the apps folder
+     L138:  public pathForImage(img){
+     L139:    if (img === null){
+
+            Declaration or statement expected. 
+
+
+            'GyroscopeOrientation' only refers to a type, but is being used as a value here. 
+
+      L45:  Geolocation,
+      L46:  Gyroscope, GyroscopeOrientation, GyroscopeOptions,
+      L47:  {provide: ErrorHandler, useClass: IonicErrorHandler}
+
+            'GyroscopeOptions' only refers to a type, but is being used as a value here. 
+
+      L45:  Geolocation,
+      L46:  Gyroscope, GyroscopeOrientation, GyroscopeOptions,
+      L47:  {provide: ErrorHandler, useClass: IonicErrorHandler}
+
+            Cannot find name 'presentActionSheet'. 
+
+      L40:    public presentActionSheet(){
+      L41:      let actionSheet = this.actionSheetCtrl.create({
+
+            Cannot find name 'itemSelected'. 
+
+      L62:    itemSelected(item: string) {
+      L63:      console.log("Selected Item", item);
+
+            Cannot find name 'item'. 
+
+      L62:    itemSelected(item: string) {
+      L63:      console.log("Selected Item", item);
+
+            'string' only refers to a type, but is being used as a value here. 
+
+      L62:    itemSelected(item: string) {
+      L63:      console.log("Selected Item", item);
+
+            Cannot find name 'item'. 
+
+      L62:  itemSelected(item: string) {
+      L63:    console.log("Selected Item", item);
+
+            Cannot find name 'takePicture'. 
+
+      L66:  //Take picture function
+      L67:  public takePicture(sourceType){
+      L68:    var options = {
+
+            Cannot find name 'sourceType'. 
+
+      L66:  //Take picture function
+      L67:  public takePicture(sourceType){
+      L68:    var options = {
+
+            Cannot find name 'sourceType'. 
+
+      L69:  quality: 100,
+      L70:  sourceType: sourceType,
+      L71:  saveToPhotoAlbum: false,
+
+            Cannot find name 'sourceType'. 
+
+      L91:  //Handling for Android library:
+      L92:  if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY){
+      L93:    this.filePath.resolveNativePath(imagePath).then(filePath => {
+
+            Cannot find name 'createFileName'. 
+
+     L108:  //Creating name for image:
+     L109:  private createFileName(){
+     L110:    var d = new Date(),
+
+            Cannot find name 'copyFileToLocalDir'. 
+
+     L116:  //Copiando a imagem para uma pasta logal
+     L117:  private copyFileToLocalDir(namePath, currentName, newFileName){
+     L118:    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+
+            Unreachable code detected. 
+
+     L116:  //Copiando a imagem para uma pasta logal
+     L117:  private copyFileToLocalDir(namePath, currentName, newFileName){
+     L118:    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+
+            Cannot find name 'namePath'. 
+
+     L116:  //Copiando a imagem para uma pasta logal
+     L117:  private copyFileToLocalDir(namePath, currentName, newFileName){
+     L118:    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+
+            Cannot find name 'currentName'. 
+
+     L116:  //Copiando a imagem para uma pasta logal
+     L117:  private copyFileToLocalDir(namePath, currentName, newFileName){
+     L118:    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+
+            Cannot find name 'namePath'. 
+
+     L117:  private copyFileToLocalDir(namePath, currentName, newFileName){
+     L118:    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+     L119:      this.lastImage = newFileName;
+
+            Cannot find name 'currentName'. 
+
+     L117:  private copyFileToLocalDir(namePath, currentName, newFileName){
+     L118:    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+     L119:      this.lastImage = newFileName;
+
+            Cannot find name 'namePath'. 
+
+     L119:  this.lastImage = newFileName;
+     L120:  console.log('Caminho da imagem' + namePath + " " + currentName);
+     L121:  console.log("Coordenadas: " + this.coords);
+
+            Cannot find name 'currentName'. 
+
+     L119:  this.lastImage = newFileName;
+     L120:  console.log('Caminho da imagem' + namePath + " " + currentName);
+     L121:  console.log("Coordenadas: " + this.coords);
+
+            Cannot find name 'presentToast'. 
+
+     L127:  //Função para mostrar os Toast:
+     L128:  private presentToast(text){
+     L129:    let toast = this.toastCtrl.create({
+
+            Cannot find name 'text'. 
+
+     L127:  //Função para mostrar os Toast:
+     L128:  private presentToast(text){
+     L129:    let toast = this.toastCtrl.create({
+
+            Cannot find name 'text'. 
+
+     L129:  let toast = this.toastCtrl.create({
+     L130:      message: text,
+     L131:      duration: 5000,
+
+            Cannot find name 'pathForImage'. 
+
+     L137:  //get accurate path to the apps folder
+     L138:  public pathForImage(img){
+     L139:    if (img === null){
+
+            Cannot find name 'img'. 
+
+     L137:  //get accurate path to the apps folder
+     L138:  public pathForImage(img){
+     L139:    if (img === null){
+
+            Cannot find name 'img'. 
+
+     L138:  public pathForImage(img){
+     L139:    if (img === null){
+     L140:      return '';
+
+[2K[GError: Failed to transpile program
+    at new BuildError (C:\Users\Larissa\Documents\Ionic\projTest\node_modules\@ionic\app-scripts\dist\util\errors.js:16:28)
+    at C:\Users\Larissa\Documents\Ionic\projTest\node_modules\@ionic\app-scripts\dist\transpile.js:159:20
+    at new Promise (<anonymous>)
+    at transpileWorker (C:\Users\Larissa\Documents\Ionic\projTest\node_modules\@ionic\app-scripts\dist\transpile.js:107:12)
+    at Object.transpile (C:\Users\Larissa\Documents\Ionic\projTest\node_modules\@ionic\app-scripts\dist\transpile.js:64:12)
+    at C:\Users\Larissa\Documents\Ionic\projTest\node_modules\@ionic\app-scripts\dist\build.js:109:82
+    at <anonymous>
+[14:53:59]  copy finished in 6.66 s 
