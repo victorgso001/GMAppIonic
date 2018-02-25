@@ -1,156 +1,164 @@
 import { Component } from '@angular/core';
-import { NavController, ActionSheetController, ToastController, Platform, LoadingController, Loading } from 'ionic-angular';
+import { NavController, ToastController } from 'ionic-angular';
 
 import { File } from '@ionic-native/file';
-import { Transfer, TransferObject } from '@ionic-native/transfer';
-import { FilePath } from '@ionic-native/file-path';
 import { Camera } from '@ionic-native/camera';
-import { StatusBar } from '@ionic-native/status-bar';
 
-import { Geolocation, Coordinates } from '@ionic-native/geolocation';
+import { Geolocation } from '@ionic-native/geolocation';
 import { Gyroscope, GyroscopeOrientation, GyroscopeOptions } from '@ionic-native/gyroscope';
 
+import { PhotoProvider, Photo } from '../../providers/photo/photo';
+
 declare var cordova: any;
-declare var google;
 
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
+
 export class HomePage {
 
-  private coords: string;
-  private error: string;
+  photos: any[] = [];
+
+  private photoOptions: object;
+  private geolocationOptions: object;
+  private gyroscopeOptions: GyroscopeOptions;
+  private lat: number;
+  private lng: number;
   private x: number;
   private y: number;
   private z: number;
 
+  private orientationDone: boolean;
+  private positionDone: boolean;
+  private gatherInfoMessage: string;
+  private hasError: boolean;
+
   lastImage: string = null;
-  loading: Loading;
 
-  constructor(public navCtrl: NavController, private camera: Camera, private transfer: TransferObject,
-              private file: File, private filePath: FilePath, public actionSheetCtrl: ActionSheetController,
-              public toastCtrl: ToastController, public platform: Platform, public loadingCtrl: LoadingController,
-              public statusBar: StatusBar, public geolocation: Geolocation, private gyroscope: Gyroscope) {
+  constructor (
+                public navCtrl: NavController,
+                private camera: Camera,
+                private file: File,
+                private toastCtrl: ToastController,
+                private geolocation: Geolocation,
+                private photoProvider: PhotoProvider,
+                private gyroscope: Gyroscope
+              ) {}
 
-  }
-
-
-
-  public presentActionSheet(){
-    let actionSheet = this.actionSheetCtrl.create({
-      title: 'Select image Source: ',
-      buttons: [{
-        text: 'Load from library',
-        handler: () => {
-          this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
-        }
-      },{
-        text: 'Use camera',
-        handler: () => {
-          this.takePicture(this.camera.PictureSourceType.CAMERA);
-        }
-      },{
-        text: 'Cancel',
-        role: 'cancel'
-      }
-    ]
-  });
-  actionSheet.present();
-  }
-
-  itemSelected(item: string) {
-    console.log("Selected Item", item);
-  }
-
-  //Take picture function
-  public takePicture(sourceType){
-    var options = {
+  ionViewDidLoad() {
+    this.loadPhotos();
+    this.gyroscopeOptions = {
+      frequency: 1000
+    };
+    this.photoOptions = {
       quality: 100,
-      sourceType: sourceType,
+      sourceType: this.camera.PictureSourceType.CAMERA,
       saveToPhotoAlbum: false,
       correctOrientation: true
     };
-
-    //Gyroscope options
-    let gyroOptions: GyroscopeOptions = {
-      frequency: 1000
+    this.geolocationOptions = {
+      timeout: 1000,
+      enableHighAccuracy: true
     }
+  }
 
-    //Get data of an image:
-    this.camera.getPicture(options).then((imagePath) =>{
+  actionTakePicture() {
+    this.camera.getPicture(this.photoOptions)
+    .then((imagePath) => {
+      this.gatherInfos(imagePath);
+    })
+    .catch(e => console.error(e));
+  }
 
-      //Get LatLong:
-      let localOptions = {timeout: 10000, enableHighAccuracy: true};
-      this.geolocation.getCurrentPosition(localOptions).then((resp) =>{
-        this.coords = resp.coords.latitude + ', ' + resp.coords.longitude;
-      }).catch((error)=>{
-        this.error = 'Error getting location: ' + error;
-      });
+  private gatherInfos(imagePath) {
+    this.orientationDone = false;
+    this.positionDone = false;
+    this.gatherInfoMessage = ' Error: ';
+    this.hasError = false;
 
-      //Get gyroscope values:
-      this.gyroscope.getCurrent(gyroOptions).then((orientation: GyroscopeOrientation) =>{
-        this.x = orientation.x;
-        this.y = orientation.y;
-        this.z = orientation.z;
-      }).catch()
-
-      //Handling for Android library:
-      if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY){
-        this.filePath.resolveNativePath(imagePath).then(filePath => {
-          let correctPath = filePath.substr(0, filePath.lastIndexOf('/')+1);
-          let currentName = imagePath.substring(imagePath.lastIndexOf('/')+1, imagePath.lastIndexOf('?'));
-          this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
-        });
-      } else {
-        var currentName = imagePath.substr(imagePath.lastIndexOf('/')+1);
-        var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/')+1);
-        this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
-        }
-      }, (err) => {
-      this.presentToast('Error while selecting photo.');
+    this.geolocation.getCurrentPosition(this.geolocationOptions)
+    .then((p) => {
+      this.lat = p.coords.latitude;
+      this.lng = p.coords.longitude;
+      this.positionDone = true;
+    })
+    .catch((error)=>{
+      console.error('Erro: location -> ' + error.message + ";");
+      this.gatherInfoMessage += ' location -> ' + error.message + ";";
+      this.positionDone = true;
+      this.hasError = true;
     });
+
+    this.gyroscope.getCurrent(this.gyroscopeOptions)
+    .then((orientation: GyroscopeOrientation) => {
+      this.x = orientation.x;
+      this.y = orientation.y;
+      this.z = orientation.z;
+      this.orientationDone = true;
+    })
+    .catch((error)=>{
+      console.error('Erro: orientation -> ' + error.message + ";");
+      this.gatherInfoMessage = ' orientation -> ' + error.message + ";";
+      this.orientationDone = true;
+      this.hasError = true;
+    });
+
+    if (this.hasError) {
+      this.showToast(this.gatherInfoMessage);
+    }
+    else {
+      console.log(this.orientationDone + " --- " + this.positionDone);
+      var currentName = imagePath.substr(imagePath.lastIndexOf('/')+1);
+      var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/')+1);
+      this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+    }
   }
 
-  //Creating name for image:
-  private createFileName(){
-    var d = new Date(),
-    n = d.getTime(),
-    newFileName = n +".jpg";
-    return newFileName;
+  private loadPhotos() {
+    this.photoProvider.getAll().then((result: any[]) => this.photos = result);
   }
 
-  //Copiando a imagem para uma pasta logal
+  private createFileName () {
+    return (new Date()).getTime() + ".jpg";
+  }
+
   private copyFileToLocalDir(namePath, currentName, newFileName){
-    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success =>{
+    this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName)
+    .then(success => {
       this.lastImage = newFileName;
-      console.log('Caminho da imagem: ' + namePath + currentName);
-      console.log("Coordenadas: " + this.coords);
-      console.log("Eixo x: "+ this.x + "; y: " + this.y + "; z: " + this.z);
-    }, error =>{
-      this.presentToast('Error while storing file');
+      // console.log('Caminho da imagem: ' + namePath + currentName);
+      // console.log(this.coords);
+      // console.log("Eixo x: "+ this.x + "; y: " + this.y + "; z: " + this.z);
+      var newPhoto = new Photo();
+      newPhoto.path = namePath + currentName;
+      newPhoto.x = this.x;
+      newPhoto.y = this.y;
+      newPhoto.z = this.z;
+      newPhoto.lat = this.lat;
+      newPhoto.lng = this.lng;
+      console.log(newPhoto);
+      this.photoProvider.insert(newPhoto)
+      .then(() => {
+        this.showToast('Foto salva.');
+        this.loadPhotos();
+      })
+      .catch(() => {
+        this.showToast('Erro ao salvar a foto.');
+      });
+
+    })
+    .catch(error => {
+      this.showToast('Erro ao armazenar a foto');
     });
   }
 
-  //Função para mostrar os Toast:
-  private presentToast(text){
-    let toast = this.toastCtrl.create({
-        message: text,
-        duration: 5000,
-        position: 'top'
-      });
-      toast.present();
+  private showToast (text) {
+    this.toastCtrl.create({
+      message: text,
+      duration: 5000,
+      position: 'botton'
+    }).present();
   }
-
-  //get accurate path to the apps folder
-  public pathForImage(img){
-    if (img === null){
-      return '';
-    }else {
-      return cordova.file.dataDirectory + img;
-    }
-  }
-
-
 }

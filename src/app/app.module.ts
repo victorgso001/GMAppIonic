@@ -8,9 +8,12 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 
 import { File } from '@ionic-native/file';
-import { Transfer, TransferObject } from '@ionic-native/transfer';
 import { FilePath } from '@ionic-native/file-path';
 import { Camera } from '@ionic-native/camera';
+
+import { SQLite } from '@ionic-native/sqlite';
+import { DatabaseProvider } from '../providers/database/database';
+import { PhotoProvider } from '../providers/photo/photo';
 
 import { Geolocation } from '@ionic-native/geolocation';
 import { Gyroscope } from '@ionic-native/gyroscope';
@@ -33,13 +36,16 @@ import { Gyroscope } from '@ionic-native/gyroscope';
     StatusBar,
     SplashScreen,
     File,
-    Transfer,
     Camera,
     FilePath,
-    TransferObject,
     Geolocation,
     Gyroscope,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+
+    SQLite,
+    //providers
+    DatabaseProvider,
+    PhotoProvider
   ]
 })
 export class AppModule {}
