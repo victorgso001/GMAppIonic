@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ToastController } from 'ionic-angular';
+import { NavController, ToastController, Platform } from 'ionic-angular';
 
 import { File } from '@ionic-native/file';
 import { Camera } from '@ionic-native/camera';
@@ -24,6 +24,7 @@ export class HomePage {
   private photoOptions: object;
   private geolocationOptions: object;
   private gyroscopeOptions: GyroscopeOptions;
+  private orientation: GyroscopeOrientation;
   private lat: number;
   private lng: number;
   private x: number;
@@ -39,19 +40,37 @@ export class HomePage {
 
   constructor (
                 public navCtrl: NavController,
+                public plt: Platform,
                 private camera: Camera,
                 private file: File,
                 private toastCtrl: ToastController,
                 private geolocation: Geolocation,
                 private photoProvider: PhotoProvider,
                 private gyroscope: Gyroscope
-              ) {}
+              ) {
+                plt.ready().then((readySource) =>{
+                  if(readySource == 'cordova'){
+                    this.gyroscope.watch(this.gyroscopeOptions)
+                      .subscribe((orientation: GyroscopeOrientation) =>{
+                        this.orientation = orientation;
+                        this.x = orientation.x;
+                        this.y = orientation.y;
+                        this.z = orientation.z;
+                      });
+                  } else {
+                    this.x = -1;
+                    this.y = -1;
+                    this.z = -1;
+                  }
+                })
+              }
 
   ionViewDidLoad() {
     this.loadPhotos();
     this.gyroscopeOptions = {
-      frequency: 1000
+      frequency: 2000
     };
+
     this.photoOptions = {
       quality: 100,
       sourceType: this.camera.PictureSourceType.CAMERA,
@@ -59,7 +78,7 @@ export class HomePage {
       correctOrientation: true
     };
     this.geolocationOptions = {
-      timeout: 1000,
+      timeout: 15000,
       enableHighAccuracy: true
     }
   }
@@ -72,13 +91,8 @@ export class HomePage {
     .catch(e => console.error(e));
   }
 
-  private gatherInfos(imagePath) {
-    this.orientationDone = false;
-    this.positionDone = false;
-    this.gatherInfoMessage = ' Error: ';
-    this.hasError = false;
-
-    this.geolocation.getCurrentPosition(this.geolocationOptions)
+  async getLocation(){
+    await this.geolocation.getCurrentPosition(this.geolocationOptions)
     .then((p) => {
       this.lat = p.coords.latitude;
       this.lng = p.coords.longitude;
@@ -90,6 +104,16 @@ export class HomePage {
       this.positionDone = true;
       this.hasError = true;
     });
+  }
+
+  private gatherInfos(imagePath) {
+    this.orientationDone = false;
+    this.positionDone = false;
+    this.gatherInfoMessage = ' Error: ';
+    this.hasError = false;
+
+    this.getLocation();
+
 
     this.gyroscope.getCurrent(this.gyroscopeOptions)
     .then((orientation: GyroscopeOrientation) => {
